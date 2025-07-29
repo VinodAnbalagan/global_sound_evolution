@@ -14,6 +14,7 @@ class AudioProcessor:
         # You can add any model initializations here if needed in the future
         print("AudioProcessor initialized.")
 
+    '''
     def download_audio_from_url(self, url):
         """
         Downloads the audio from a YouTube URL to a temporary mp3 file.
@@ -38,27 +39,20 @@ class AudioProcessor:
         
         # Return the path to the downloaded file
         return os.path.join(temp_dir, 'downloaded_audio.mp3')
-
-    def process_video_or_audio(self, source_path, is_url, apply_noise_reduction, duration_limit=None):
+    '''
+    
+    def process_video_or_audio(self, source_path, apply_noise_reduction, duration_limit=None):
         """
-        A unified function to handle both video files and downloaded audio.
-        - If it's a URL, source_path is assumed to be an audio file.
-        - If it's a video upload, it extracts the audio first.
+        A simplified function that handles only uploaded video files.
         """
-        if is_url:
-            # Source is already an audio file downloaded from a URL
-            audio_path = source_path
-        else:
-            # Source is a video file, need to extract audio
-            print(f"Extracting audio from video: {source_path}")
-            video = VideoFileClip(source_path)
-            temp_audio_path = tempfile.mktemp(suffix='.wav')
-            video.audio.write_audiofile(temp_audio_path, codec='pcm_s16le')
-            audio_path = temp_audio_path
+        print(f"Extracting audio from video: {source_path}")
+        video = VideoFileClip(source_path)
+        temp_audio_path = tempfile.mktemp(suffix='.wav')
+        video.audio.write_audiofile(temp_audio_path, codec='pcm_s16le')
         
-        # Now, process the audio file (trim, noise reduce)
+        # Now, process the extracted audio file
         print("Loading audio for processing...")
-        y, sr = librosa.load(audio_path, sr=16000, mono=True)
+        y, sr = librosa.load(temp_audio_path, sr=16000, mono=True)
 
         if duration_limit:
             y = y[:int(duration_limit * sr)]
@@ -70,8 +64,7 @@ class AudioProcessor:
         processed_audio_path = tempfile.mktemp(suffix='.wav')
         sf.write(processed_audio_path, y, sr)
         
-        # If the original audio was extracted from video, it's temporary and should be cleaned up
-        if not is_url:
-            os.remove(audio_path)
+        # The original extracted audio is temporary and should be cleaned up
+        os.remove(temp_audio_path)
             
         return processed_audio_path
