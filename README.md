@@ -6,7 +6,7 @@ global sound 2.0
 [![Powered by Hugging Face](https://img.shields.io/badge/🤗-Powered%20by%20Hugging%20Face-yellow.svg)](https://huggingface.co/)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/release/python-390/)
 
-**Go beyond translation. Transcribe, translate, summarize, and extract key insights from any video on your computer or from YouTube.**
+**Go beyond translation. Transcribe, translate, summarize, and extract key insights from any video on your computer.**
 
 Turn your raw video files into ready-to-use content. Generate accurate transcripts, multilingual subtitles, concise summaries, and key topics in minutes.
 
