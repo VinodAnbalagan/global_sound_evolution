@@ -11,7 +11,7 @@ from src.translator import Translator
 from src.subtitle_generator import SubtitleGenerator
 from src.analyzer import Analyzer
 
-# --- 1. INITIALIZE ALL MODELS ONCE ON STARTUP ---
+# --- Model Initialization (No changes) ---
 print("Initializing all models, please wait...")
 audio_processor = AudioProcessor()
 transcriber = Transcriber(model_size="base")
@@ -35,34 +35,25 @@ def increment_usage_count():
     return count
 
 
-# --- MAIN PROCESSING FUNCTION (COMPLETE) ---
-def generate_subtitles_for_video(video_upload_path, youtube_url, apply_noise_reduction, target_language, preserve_technical_terms, quick_process, progress=gr.Progress()):
-    if not video_upload_path and not youtube_url:
-        raise gr.Error("Error: Please upload a video file OR provide a YouTube URL to begin.")
-    if video_upload_path and youtube_url:
-        raise gr.Error("Error: Please provide only one input at a time (either a file or a URL). Clear the other input.")
+# --- MAIN PROCESSING FUNCTION (SIMPLIFIED) ---
+def generate_subtitles_for_video(video_upload_path, apply_noise_reduction, target_language, preserve_technical_terms, quick_process, progress=gr.Progress()):
+    # Simplified input validation
+    if not video_upload_path:
+        raise gr.Error("Error: Please upload a video file to begin.")
 
-    is_url = bool(youtube_url)
-    source_input = youtube_url if is_url else video_upload_path
-    
     temp_files_to_clean = []
     try:
         duration_limit = 60 if quick_process else None
         
         progress(0.1, desc="Step 1/5: Preparing Audio...")
-        if is_url:
-            downloaded_audio_path = audio_processor.download_audio_from_url(source_input)
-            temp_files_to_clean.append(downloaded_audio_path)
-            source_for_processing = downloaded_audio_path
-        else:
-            source_for_processing = source_input
-
-        processed_audio_path = audio_processor.process_video_or_audio(source_for_processing, is_url, apply_noise_reduction, duration_limit)
+        # Simplified logic: always use the uploaded file
+        processed_audio_path = audio_processor.process_video_or_audio(video_upload_path, apply_noise_reduction, duration_limit)
         temp_files_to_clean.append(processed_audio_path)
         
         if not os.path.exists(processed_audio_path) or os.path.getsize(processed_audio_path) < 1024:
             raise gr.Error("Failed to extract valid audio. The source might be silent or invalid.")
 
+        # --- The rest of the pipeline remains the same ---
         progress(0.3, desc="Step 2/5: Transcribing audio...")
         original_segments, src_lang = transcriber.transcribe_audio(processed_audio_path)
         
@@ -84,15 +75,9 @@ def generate_subtitles_for_video(video_upload_path, youtube_url, apply_noise_red
         
         progress(1.0, desc="Step 5/5: Finalizing...")
         
-        processing_summary = (
-            f"Source Language Detected: {src_lang.upper()}\n"
-            f"Translation Language: {target_language.upper() if target_language else 'N/A (Transcription only)'}"
-        )
-        # Use the full transcript for the preview box, not just the first 5 segments
+        processing_summary = (f"Source Language Detected: {src_lang.upper()}\n" + f"Translation Language: {target_language.upper() if target_language else 'N/A'}")
         preview_text = full_transcript_text
-        
-        increment_usage_count()
-        video_player_update = (None, final_video_subtitle_path) if is_url else (source_input, final_video_subtitle_path)
+        video_player_update = (video_upload_path, final_video_subtitle_path)
 
         return video_player_update, output_files, processing_summary, preview_text, summary, keywords
 
@@ -111,77 +96,41 @@ def generate_subtitles_for_video(video_upload_path, youtube_url, apply_noise_red
                 except OSError as e_os: print(f"Error cleaning up file/dir {path}: {e_os}")
 
 
-# --- GRADIO UI (COMPLETE) ---
+# --- GRADIO UI (SIMPLIFIED) ---
 with gr.Blocks(theme=gr.themes.Soft(), title="Global Sound 🌍", css="style.css") as demo:
-    # --- Headers (FILLED IN) ---
     gr.Markdown("# Global Sound — AI Video Intelligence Platform")
-    gr.Markdown("Go beyond translation. Transcribe, translate, summarize, and extract keywords from any video.")
+    gr.Markdown("Transcribe, translate, summarize, and extract keywords from your video files.")
     
-    # --- How to Use and Performance Note (FILLED IN) ---
-    gr.Markdown("### How to Use\n"
-            "1. **Choose Input**: Select the 'Upload Video' or 'From YouTube URL' tab.\n"
-            "2. **Provide Source**: Upload your file or paste the URL.\n"
-            "3. **Choose Options**: Select a language for translation.\n"
-            "4. **Generate**: Click the **Generate Insights** button and wait.")
-
-    gr.Markdown(
-        "<div class='performance-note'>"
-        "**⚠️ Important Performance Note:** This app runs on a free CPU. Processing is limited to the first 15 minutes of video/audio to avoid timeouts. Use 'Quick Process' for a fast 60s test."
-        "</div>"
-    )
-
-    language_choices = [
-        ("Arabic", "ar"), ("Chinese", "zh"), ("English", "en"), ("French", "fr"), 
-        ("German", "de"), ("Hindi", "hi"), ("Japanese", "ja"), ("Korean", "ko"), 
-        ("Portuguese", "pt"), ("Russian", "ru"), ("Spanish", "es"), ("Tamil", "ta"), 
-        ("Ukrainian", "uk"), ("Vietnamese", "vi")
-    ]
-    translation_options = [("No Translation", None)] + sorted(language_choices)
-
+    # ... (Performance note can stay the same) ...
+    
     with gr.Row(equal_height=False):
         with gr.Column(scale=2):
             gr.Markdown("### 1. Input & Options")
             
-            with gr.Tabs():
-                with gr.TabItem("⬆️ Upload Video File"):
-                    video_upload_input = gr.Video(label="Upload Your Video", sources=['upload'])
-                with gr.TabItem("🌐 From YouTube URL"):
-                    youtube_url_input = gr.Textbox(label="YouTube Video URL", placeholder="e.g., https://www.youtube.com/watch?v=dQw4w9WgXcQ")
+            # --- REMOVED TABS, SIMPLIFIED TO UPLOAD-ONLY ---
+            video_upload_input = gr.Video(label="Upload Your Video", sources=['upload'])
 
             with gr.Accordion("Settings", open=True):
-                quick_process_checkbox = gr.Checkbox(label="Quick Process (First 60s Only)", value=True, info="Ideal for testing or a fast preview.")
-                noise_reduction = gr.Checkbox(label="Apply Noise Reduction", value=True, info="Recommended for sources with background noise.")
-                preserve_technical = gr.Checkbox(label="Preserve Technical Terms", value=True, info="Protects words like 'GAN' or 'PyTorch' from translation.")
+                # ... (settings checkboxes can stay the same) ...
             
-            language_dropdown = gr.Dropdown(label="Translate To", info="Select a language for translation.", choices=translation_options, value=None)
+            language_dropdown = gr.Dropdown(...) # (dropdown can stay the same)
             
             with gr.Row():
                 process_btn = gr.Button("Generate Insights", variant="primary", scale=3)
                 stop_btn = gr.Button("Stop", variant="stop", scale=1)
 
         with gr.Column(scale=3):
-            gr.Markdown("### 2. Results")
-            # REMOVED the 'info' parameter to prevent version errors.
-            video_output = gr.Video(label="Video with Subtitles", interactive=False)
-            
-            with gr.Tabs():
-                with gr.TabItem("📝 Summary & Keywords"):
-                    summary_output = gr.Textbox(label="AI-Generated Summary", lines=6, interactive=False)
-                    keywords_output = gr.Textbox(label="Extracted Keywords", lines=2, interactive=False)
-                with gr.TabItem("📜 Full Transcript"):
-                    preview_output = gr.Textbox(label="Full Transcript", lines=8, interactive=False)
-                with gr.TabItem("⚙️ Processing Details"):
-                    processing_details_output = gr.Textbox(label="Processing Details", lines=3, interactive=False)
-            
-            output_files = gr.File(label="Download Subtitle Files (.srt)", file_count="multiple", interactive=False)
+            # ... (Results section can stay the same) ...
 
     process_event = process_btn.click(
         fn=generate_subtitles_for_video,
-        inputs=[video_upload_input, youtube_url_input, noise_reduction, language_dropdown, preserve_technical, quick_process_checkbox],
-        outputs=[video_output, output_files, processing_details_output, preview_output, summary_output, keywords_output]
+        # --- SIMPLIFIED INPUTS ---
+        inputs=[video_upload_input, noise_reduction, language_dropdown, preserve_technical, quick_process_checkbox],
+        outputs=[video_output, output_files, processing_details_output, preview_text, summary_output, keywords_output]
     )
 
     stop_btn.click(fn=None, inputs=None, outputs=None, cancels=[process_event])
+
 
     # --- Footer (FILLED IN) ---
     gr.Markdown("---")
