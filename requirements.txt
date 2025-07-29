@@ -1,12 +1,9 @@
-# requirements.txt 
+# requirements.txt (FINAL - NO CONFLICTS)
 
-gradio==4.39.0          # <-- A very recent stable version that resolves the conflict.
-yt-dlp==2024.07.25      # <-- Updated to a very recent stable version as well.
-
-# --- Core ML & Processing Libraries ---
+gradio==4.39.0      # Use a recent, stable version of Gradio
 faster-whisper
 transformers==4.41.1
-torch>=2.0              # It's safe to use a more modern torch baseline
+torch>=2.0
 sentencepiece
 librosa==0.10.1
 moviepy==1.0.3
