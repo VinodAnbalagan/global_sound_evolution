@@ -56,8 +56,8 @@ This online demo runs on a free CPU, which can be slow. For faster performance a
 
 **1. Clone the repository:**
 
-git clone https://github.com/VinodAnbalagan/global-sound.git
-cd global-sound
+git clone [https://github.com/VinodAnbalagan/global-sound.git
+cd global-sound](https://github.com/VinodAnbalagan/global_sound_evolution)
 
 **2. Create a virtual environment and install dependancies:**
 # Create a virtual environment
