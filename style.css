@@ -1,0 +1,138 @@
+/* --- GLOBAL STYLES & FONTS --- */
+
+/* Import a modern, clean font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+/* Apply a subtle gradient background and the new font to the whole page */
+body {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    font-family: 'Inter', sans-serif;
+}
+
+/* --- MAIN CONTAINER & LAYOUT --- */
+
+/* Style the main app container for a "card" or "dashboard" feel */
+.gradio-container {
+    max-width: 950px; /* A bit wider to accommodate the layout */
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e0e0e0;
+    background-color: white;
+}
+
+/* --- HEADERS & TEXT --- */
+
+/* Style the main title */
+h1 {
+    text-align: center;
+    color: #2c3e50; /* A dark, professional blue */
+    font-weight: 700;
+}
+
+/* Style the subtitles and other markdown text */
+.prose {
+    color: #576574; /* A softer grey-blue for descriptions */
+}
+
+/* Style section headers (e.g., "1. Input & Options") */
+h3 {
+    color: #2c3e50;
+    font-weight: 600;
+    border-bottom: 2px solid #a0b2c8;
+    padding-bottom: 8px;
+    margin-top: 1rem;
+}
+
+/* --- BUTTONS --- */
+
+/* Style the primary "Generate Insights" button */
+.gradio-button.primary {
+    background: linear-gradient(90deg, #4e54c8, #8f94fb); /* A nice blue-purple gradient */
+    color: white;
+    font-weight: 600;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(78, 84, 200, 0.2);
+    transition: all 0.3s ease-in-out;
+    border: none;
+}
+
+/* Add a hover effect to the primary button */
+.gradio-button.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(78, 84, 200, 0.3);
+}
+
+/* Style the secondary "Stop" button */
+.gradio-button.secondary, .gradio-button.stop {
+    background-color: #f1f2f6;
+    color: #576574;
+    border: 1px solid #dcdde1;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+}
+
+.gradio-button.secondary:hover, .gradio-button.stop:hover {
+    background-color: #e5e6e8;
+}
+
+/* --- UI COMPONENTS (TABS, ACCORDIONS, ETC.) --- */
+
+/* Style the tabs to make the selected tab more prominent */
+.tab-nav button {
+    border-radius: 8px 8px 0 0 !important;
+    border: 1px solid transparent !important;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.tab-nav button.selected {
+    background-color: white !important;
+    color: #4e54c8 !important; /* Match primary button color */
+    border-color: #e0e0e0 #e0e0e0 white !important; /* Create an "open tab" effect */
+    border-bottom: 2px solid #4e54c8 !important;
+}
+
+/* Style the accordion for settings */
+.gradio-accordion {
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    box-shadow: none;
+}
+
+/* Style the performance warning note */
+.performance-note {
+    text-align: center;
+    padding: 12px;
+    border-radius: 8px;
+    background-color: #fffbe6; /* A soft yellow */
+    color: #8a6d3b;
+    border: 1px solid #ffeeba;
+    margin-bottom: 1.5rem;
+}
+
+/* Style the upload box */
+.upload-box, .file-preview {
+    border: 2px dashed #a0b2c8;
+    border-radius: 12px;
+    background-color: #f8f9fa;
+    transition: background-color 0.3s;
+}
+
+.upload-box:hover {
+    background-color: #f1f3f5;
+}
+
+/* --- RESULT BOXES --- */
+
+/* General styling for all output textboxes */
+.gradio-textbox {
+    border-radius: 8px;
+    background-color: #f8f9fa; /* A very light grey for contrast */
+    border: 1px solid #e9ecef;
+}
+
+/* Add a specific touch to the summary and keyword boxes */
+#summary-output, #keywords-output {
+    background: linear-gradient(to right, #eef2f3, #f0f3f5);
+}
